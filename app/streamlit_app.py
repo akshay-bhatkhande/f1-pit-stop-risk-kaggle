@@ -231,7 +231,16 @@ def main() -> None:
     with left:
         st.subheader("Score distribution (OOF)")
         hist_df = pd.DataFrame({"score": y_score, "pit": y_true})
-        st.bar_chart(hist_df.groupby(pd.cut(hist_df["score"], bins=20), observed=True)["pit"].mean())
+        # Altair rejects pandas IntervalIndex labels; use string bin labels.
+        hist_df["score_bin"] = pd.cut(hist_df["score"], bins=20)
+        pit_by_bin = (
+            hist_df.groupby("score_bin", observed=True)["pit"]
+            .mean()
+            .reset_index()
+            .rename(columns={"pit": "pit_rate"})
+        )
+        pit_by_bin["score_bin"] = pit_by_bin["score_bin"].astype(str)
+        st.bar_chart(pit_by_bin, x="score_bin", y="pit_rate")
 
     with right:
         st.subheader("Segment notes")
