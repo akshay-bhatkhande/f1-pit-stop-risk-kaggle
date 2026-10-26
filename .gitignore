@@ -45,6 +45,8 @@ models/*.pkl
 submissions/*.csv
 !submissions/.gitkeep
 /reports/
+!docs/reports/
+!docs/reports/**
 *.log
 .pytest_cache/
 .coverage
