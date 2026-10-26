@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import joblib
@@ -9,11 +10,13 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+from src.data.load import SOURCE_KAGGLE, data_source_label, infer_data_source
 from src.eval.metrics import recall_at_topk
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEMO_DIR = REPO_ROOT / "models" / "demo"
 BUNDLE_PATH = DEMO_DIR / "triage_bundle.joblib"
+META_PATH = DEMO_DIR / "meta.json"
 OOF_PARQUET = DEMO_DIR / "oof_eval.parquet"
 OOF_CSV = DEMO_DIR / "oof_eval.csv"
 REPORTS = REPO_ROOT / "docs" / "reports"
@@ -33,6 +36,23 @@ def load_oof() -> pd.DataFrame | None:
     if OOF_CSV.exists():
         return pd.read_csv(OOF_CSV)
     return None
+
+
+def resolve_provenance() -> dict:
+    meta: dict = {}
+    if META_PATH.exists():
+        try:
+            meta = json.loads(META_PATH.read_text())
+        except json.JSONDecodeError:
+            meta = {}
+    source = meta.get("data_source") or infer_data_source()
+    return {
+        "data_source": source,
+        "label": meta.get("data_source_label") or data_source_label(source),
+        "n_rows": meta.get("n_rows_trained"),
+        "official": bool(meta.get("metrics_are_official_kaggle"))
+        or source == SOURCE_KAGGLE,
+    }
 
 
 def main() -> None:
@@ -75,6 +95,15 @@ def main() -> None:
             color: #d7dde6;
             font-size: 0.92rem;
         }
+        .synth-banner {
+            background: #3a1808;
+            border: 1px solid #c45c26;
+            color: #ffd7b8;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.85rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -90,6 +119,28 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
+    provenance = resolve_provenance()
+    if not provenance["official"]:
+        n_note = (
+            f" · trained on {provenance['n_rows']:,} rows"
+            if provenance.get("n_rows")
+            else ""
+        )
+        st.markdown(
+            f"""
+            <div class="synth-banner">
+              DATA SOURCE: {provenance["label"]}{n_note}.
+              Metrics and scores below are <strong>not</strong> official Kaggle Playground S6E5 results.
+              To use real CSVs: place <code>~/.kaggle/kaggle.json</code>, run
+              <code>FORCE=1 bash scripts/download_data.sh</code>, then
+              <code>python -m src.models.train</code> and reload.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.success(f"Data source: {provenance['label']}")
+
     bundle = load_bundle()
     oof = load_oof()
 
@@ -103,7 +154,10 @@ def main() -> None:
         st.stop()
 
     primary = bundle.get("primary", "hist_gbm")
-    st.caption(f"Primary model: **{primary}** · held-out OOF scores for triage controls")
+    st.caption(
+        f"Primary model: **{primary}** · held-out OOF scores for triage controls · "
+        f"source: **{provenance['label']}**"
+    )
 
     col_a, col_b, col_c = st.columns([1.1, 1, 1])
     with col_a:
@@ -180,13 +234,20 @@ def main() -> None:
         else:
             st.info("Run training to populate docs/reports/slice_*.csv")
 
+    caveat_data = (
+        "Shipped metrics are on <em>synthetic demo</em> CSVs (~22k laps) unless you "
+        "downloaded official Kaggle files and retrained."
+        if not provenance["official"]
+        else "Trained on official Kaggle Playground S6E5 CSVs (local CV — not a medal claim)."
+    )
     st.markdown(
-        """
+        f"""
         <div class="caveat">
           <strong>Caveats</strong><br/>
-          Playground / demo data is <em>synthetic</em> (inspired by an F1 strategy dataset) —
-          treat this as ML literacy + ops framing, not race-engineering truth.
-          Not live telemetry. Watch late-stint and caution-regime slices for higher error.
+          {caveat_data}
+          Playground data is inspired by an F1 strategy dataset — treat this as ML literacy
+          + ops framing, not race-engineering truth. Not live telemetry.
+          Watch late-stint and caution-regime slices for higher error.
           Accuracy is not the hero metric under ~4:1 imbalance; use PR-AUC and recall@top-k.
         </div>
         """,

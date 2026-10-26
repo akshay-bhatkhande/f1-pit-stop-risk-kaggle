@@ -69,5 +69,8 @@
     }
   ],
   "n_rows_trained": 21660,
-  "pit_rate": 0.23882733148661126
+  "pit_rate": 0.23882733148661126,
+  "data_source": "synthetic_demo",
+  "data_source_label": "SYNTHETIC DEMO (not official Kaggle CSVs)",
+  "metrics_are_official_kaggle": false
 }

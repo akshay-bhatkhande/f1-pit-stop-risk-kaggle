@@ -30,6 +30,7 @@ data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/raw/README.md
+!data/raw/DATA_SOURCE.txt
 
 # Model dumps at models/ root; committed demo bundle lives under models/demo/
 models/*.joblib
