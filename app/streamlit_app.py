@@ -3,7 +3,15 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+# Ensure repo root is on sys.path so `from src...` works when Streamlit is
+# launched from the repo root or from app/ (streamlit sets cwd variously).
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+_repo_root_str = str(_REPO_ROOT)
+if _repo_root_str not in sys.path:
+    sys.path.insert(0, _repo_root_str)
 
 import joblib
 import numpy as np
@@ -13,7 +21,7 @@ import streamlit as st
 from src.data.load import SOURCE_KAGGLE, data_source_label, infer_data_source
 from src.eval.metrics import recall_at_topk
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = _REPO_ROOT
 DEMO_DIR = REPO_ROOT / "models" / "demo"
 BUNDLE_PATH = DEMO_DIR / "triage_bundle.joblib"
 META_PATH = DEMO_DIR / "meta.json"
