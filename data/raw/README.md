@@ -1,5 +1,7 @@
 # Raw competition data
 
+**Current local status:** official S6E5 CSVs present; `DATA_SOURCE.txt` first line = `kaggle_playground_s6e5` (CSVs are gitignored).
+
 Place Kaggle Playground Series S6E5 files here:
 
 - `train.csv`
