@@ -15,9 +15,11 @@
 
 ---
 
-## Metrics (5-fold GroupKFold by Race · demo train)
+## Metrics (5-fold GroupKFold by Race)
 
-Shipped offline demo (~22k synthetic laps, pit rate ≈ 24%). Replace with official Kaggle CSVs for competition-scale runs.
+> **Honesty label:** these numbers are from **SYNTHETIC DEMO** data (`python -m src.data.generate_demo`, ~21.7k train rows, pit rate ≈ 24%).  
+> They are **not** official Kaggle Playground S6E5 / competition-scale results. Build machine had no `~/.kaggle/kaggle.json`.  
+> After you drop in real CSVs and retrain, replace this table from `docs/reports/cv_metrics.csv`.
 
 | Model | ROC-AUC | PR-AUC | Recall@top-5% | Recall@top-10% |
 | --- | ---: | ---: | ---: | ---: |
@@ -26,7 +28,7 @@ Shipped offline demo (~22k synthetic laps, pit rate ≈ 24%). Replace with offic
 | **Logistic (primary)** | **0.690** | **0.411** | **0.112** | **0.208** |
 | HistGradientBoosting | 0.685 | 0.403 | 0.111 | 0.203 |
 
-Means over folds; see `docs/reports/cv_metrics.csv`. Primary model = best **PR-AUC** (tie-break ROC-AUC).
+Means over folds; see `docs/reports/cv_metrics.csv`. Primary model = best **PR-AUC** (tie-break ROC-AUC). Provenance: `models/demo/meta.json` → `data_source=synthetic_demo`.
 
 **Recall@top-k** = of true pits, how many fall in the top *k%* of scored eval rows (ops “how many alerts can we review?”).
 
@@ -44,21 +46,30 @@ pip install -r requirements.txt
 # Data — preferred (Kaggle token in ~/.kaggle/kaggle.json, chmod 600)
 bash scripts/download_data.sh
 
-# OR offline synthetic demo (no Kaggle account)
+# OR offline synthetic demo (no Kaggle account) — metrics will be demo-only
 python -m src.data.generate_demo
 
-python -m src.models.train   # optional if using committed models/demo/
+python -m src.models.train   # required after swapping to real Kaggle CSVs
 pytest
 streamlit run app/streamlit_app.py
 ```
 
-A trained demo bundle is committed under `models/demo/` so the triage UI opens without a full retrain.
+A trained **synthetic-demo** bundle is committed under `models/demo/` so the triage UI opens without a full retrain. The UI banners this clearly.
+
+### Owner: swap synthetic → real Kaggle CSVs
+
+1. Create a free Kaggle account; accept [S6E5 rules](https://www.kaggle.com/competitions/playground-series-s6e5/rules).  
+2. Account → Settings → API → Create New Token → save as `~/.kaggle/kaggle.json` → `chmod 600 ~/.kaggle/kaggle.json`.  
+3. From repo root: `FORCE=1 bash scripts/download_data.sh`  
+   (or manually unzip `train.csv` / `test.csv` / `sample_submission.csv` into `data/raw/` and write `kaggle_playground_s6e5` as the first line of `data/raw/DATA_SOURCE.txt`).  
+4. `python -m src.models.train` then refresh Streamlit / update the README metrics table from `docs/reports/cv_metrics.csv`.
 
 ### Manual Kaggle download
 
 1. https://www.kaggle.com/competitions/playground-series-s6e5/data  
 2. Accept rules → Download All  
-3. Unzip `train.csv`, `test.csv`, `sample_submission.csv` into `data/raw/`
+3. Unzip `train.csv`, `test.csv`, `sample_submission.csv` into `data/raw/`  
+4. Retrain (step 4 above) — do not keep synthetic metrics after swapping files.
 
 ---
 
@@ -85,7 +96,7 @@ scripts/download_data.sh
 
 ## Limitations
 
-- Demo metrics are on **synthetic** data unless you load official Kaggle CSVs.
+- **Shipped metrics/models are synthetic-demo only** until the owner downloads official S6E5 CSVs and retrains (see above).
 - Not a production pit-wall system; no real-time telemetry.
 - Late-race and caution regimes are harder — see caveats in the UI and `docs/decisions.md`.
 - Accuracy is intentionally **not** a hero metric under imbalance.

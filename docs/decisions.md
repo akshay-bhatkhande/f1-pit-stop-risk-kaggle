@@ -14,6 +14,13 @@
 | Fallback: `python -m src.data.generate_demo` | $0 offline clone-and-run when `~/.kaggle/kaggle.json` is missing |
 | Do **not** silently mix original F1 strategy `Normalized_TyreLife` into train | Spec leakage / honesty failure |
 
+### Shipped build status (Review 2026-10-26)
+
+- No `~/.kaggle/kaggle.json` on the build/review machine → **could not** download official S6E5.
+- Committed artifacts (`models/demo/*`, README metrics, `docs/reports/*`) are from **synthetic_demo** (~21.7k rows).
+- Provenance is explicit: `data/raw/DATA_SOURCE.txt`, `models/demo/meta.json` (`data_source`, `metrics_are_official_kaggle=false`), Streamlit banner.
+- Owner path to real data: token → `FORCE=1 bash scripts/download_data.sh` → `python -m src.models.train` → refresh README table.
+
 ## Model pick
 
 | Model | Role |

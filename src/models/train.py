@@ -14,7 +14,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GroupKFold, StratifiedKFold
 from sklearn.pipeline import Pipeline
 
-from src.data.load import load_train, summarize_frame
+from src.data.load import data_source_label, infer_data_source, load_train, summarize_frame
 from src.eval.metrics import classification_report_scores, mean_std_table
 from src.eval.slices import segment_tables
 from src.features.build import engineer, make_preprocessor, prepare_xy
@@ -112,11 +112,19 @@ def _oof_sklearn_pipeline(
 def run_training(max_rows: int | None = None) -> dict:
     df = load_train()
     summary = summarize_frame(df)
+    source = summary.get("data_source") or infer_data_source(df)
     print(
         f"Loaded train: {summary['n_rows']:,} rows | "
         f"pit_rate={summary.get('pit_rate', float('nan')):.3f} | "
-        f"missing_cells={summary['n_missing_cells']}"
+        f"missing_cells={summary['n_missing_cells']} | "
+        f"data_source={source}"
     )
+    if source != "kaggle_playground_s6e5":
+        print(
+            "WARNING: training on SYNTHETIC / non-Kaggle data. "
+            "Do not present metrics as official S6E5 results. "
+            "Owner: place ~/.kaggle/kaggle.json → FORCE=1 bash scripts/download_data.sh → retrain."
+        )
     if max_rows is not None and len(df) > max_rows:
         df = df.sample(max_rows, random_state=RANDOM_STATE).reset_index(drop=True)
         print(f"Subsampled to {len(df):,} rows for this run")
@@ -237,6 +245,9 @@ def run_training(max_rows: int | None = None) -> dict:
         "metrics": metrics_rows,
         "n_rows_trained": int(len(df)),
         "pit_rate": summary.get("pit_rate"),
+        "data_source": source,
+        "data_source_label": data_source_label(source),
+        "metrics_are_official_kaggle": source == "kaggle_playground_s6e5",
     }
     (demo_dir / "meta.json").write_text(json.dumps(meta, indent=2))
     (REPORTS_DIR / "cv_metrics.json").write_text(json.dumps(meta, indent=2))

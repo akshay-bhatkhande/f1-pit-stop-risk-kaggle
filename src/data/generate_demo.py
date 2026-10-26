@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from src.data.load import SOURCE_SYNTHETIC, write_data_source
 from src.data.schema import DEMO_COLUMNS, TARGET
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -139,11 +140,22 @@ def generate(
     train.to_csv(train_path, index=False)
     test.to_csv(test_path, index=False)
     pd.DataFrame({"id": test["id"], TARGET: 0.0}).to_csv(sample_path, index=False)
+    write_data_source(
+        SOURCE_SYNTHETIC,
+        note=(
+            f"rows_train={len(train)} rows_test={len(test)} "
+            "NOT official Kaggle Playground S6E5. "
+            "Replace via: bash scripts/download_data.sh "
+            "or manual unzip into data/raw/ then retrain."
+        ),
+        directory=out,
+    )
 
     rate = float(train[TARGET].mean())
     print(f"Wrote {train_path} ({len(train):,} rows, pit_rate={rate:.3f})")
     print(f"Wrote {test_path} ({len(test):,} rows)")
-    print("NOTE: synthetic demo data — replace with Kaggle CSVs when available.")
+    print("NOTE: SYNTHETIC DEMO DATA — metrics are NOT official Kaggle results.")
+    print("      Replace with Kaggle CSVs (scripts/download_data.sh) then retrain.")
     return train_path, test_path
 
 

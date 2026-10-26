@@ -13,6 +13,7 @@ AI-assisted scaffold + human-owned metric / leakage calls for `f1-pit-stop-risk-
 7. **Artifact** — `models/demo/triage_bundle.joblib` + OOF parquet for Streamlit.
 8. **UI** — `app/streamlit_app.py` attention list + alert budget controls.
 9. **Verify** — `pytest` green; Streamlit smoke; demo media captured for portfolio store.
+10. **Review (2026-10-26)** — still no Kaggle token on machine; reinforced synthetic labeling (DATA_SOURCE marker, meta flags, UI banner, README owner steps, download script FORCE overwrite). Did **not** retrain on official CSVs (unavailable).
 
 ## Human-owned calls
 
