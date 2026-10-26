@@ -147,7 +147,15 @@ def main() -> None:
             unsafe_allow_html=True,
         )
     else:
-        st.success(f"Data source: {provenance['label']}")
+        n_note = (
+            f" · trained on {provenance['n_rows']:,} rows"
+            if provenance.get("n_rows")
+            else ""
+        )
+        st.success(
+            f"Data source: {provenance['label']}{n_note} · "
+            "local GroupKFold CV (not a private-LB medal claim)."
+        )
 
     bundle = load_bundle()
     oof = load_oof()

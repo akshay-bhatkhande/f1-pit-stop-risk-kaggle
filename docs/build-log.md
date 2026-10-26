@@ -14,12 +14,13 @@ AI-assisted scaffold + human-owned metric / leakage calls for `f1-pit-stop-risk-
 8. **UI** — `app/streamlit_app.py` attention list + alert budget controls.
 9. **Verify** — `pytest` green; Streamlit smoke; demo media captured for portfolio store.
 10. **Review (2026-10-26)** — still no Kaggle token on machine; reinforced synthetic labeling (DATA_SOURCE marker, meta flags, UI banner, README owner steps, download script FORCE overwrite). Did **not** retrain on official CSVs (unavailable).
+11. **Official retrain (2026-10-26)** — Akshay placed S6E5 zip contents at `Desktop/Job Repo/playground-series-s6e5` (~439k train). Copied into `data/raw/`, marked `kaggle_playground_s6e5`, retrained full CV. Primary flipped to **HistGBM** (ROC-AUC ≈ 0.928, PR-AUC ≈ 0.724). README / decisions / meta / UI provenance updated for real data. Comparison vs winners written in portfolio store.
 
 ## Human-owned calls
 
 - Primary model selection rule: **PR-AUC first**, not ROC vanity.
 - Accuracy banned as hero metric.
-- Demo vs Kaggle data clearly labeled; never claim medal skill.
+- Demo vs Kaggle data clearly labeled; never claim medal skill / private LB.
 - Cut list enforced (no ensembles / SMOTE headline / paid APIs).
 
 ## Commands used
