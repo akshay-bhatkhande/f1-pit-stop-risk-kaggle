@@ -1,0 +1,73 @@
+{
+  "primary": "logistic",
+  "split": "GroupKFold(Race)",
+  "features": [
+    "LapNumber",
+    "Position",
+    "Stint",
+    "TyreLife",
+    "RaceProgress",
+    "LapTime",
+    "LapTime_Delta",
+    "Cumulative_Degradation",
+    "Position_Change",
+    "GapToLeader",
+    "IntervalToNext",
+    "Year",
+    "tyre_life_per_progress",
+    "tyre_life_x_stint",
+    "late_race",
+    "mid_race",
+    "track_caution",
+    "Compound",
+    "Driver",
+    "TrackStatus"
+  ],
+  "engineered": [
+    "tyre_life_per_progress",
+    "tyre_life_x_stint",
+    "late_race",
+    "mid_race",
+    "track_caution"
+  ],
+  "metrics": [
+    {
+      "model": "B0_prevalence",
+      "roc_auc_mean": 0.5,
+      "roc_auc_std": 0.0,
+      "pr_auc_mean": 0.2389379442318207,
+      "pr_auc_std": 0.001962603361396051,
+      "recall@top5%_mean": 0.046182814065059294,
+      "recall@top10%_mean": 0.10107762913708682
+    },
+    {
+      "model": "B1_rule",
+      "roc_auc_mean": 0.6711415676090101,
+      "roc_auc_std": 0.008031718297906339,
+      "pr_auc_mean": 0.37258710023090347,
+      "pr_auc_std": 0.008119394470596545,
+      "recall@top5%_mean": 0.0934849735881421,
+      "recall@top10%_mean": 0.18884424557357357
+    },
+    {
+      "model": "logistic",
+      "roc_auc_mean": 0.6897342898209411,
+      "roc_auc_std": 0.007594251915217441,
+      "pr_auc_mean": 0.4110731037162984,
+      "pr_auc_std": 0.014831185042244363,
+      "recall@top5%_mean": 0.11208471543595037,
+      "recall@top10%_mean": 0.20817672283454244
+    },
+    {
+      "model": "hist_gbm",
+      "roc_auc_mean": 0.6852493645033889,
+      "roc_auc_std": 0.007558862381617644,
+      "pr_auc_mean": 0.40277964862484,
+      "pr_auc_std": 0.01042917087836803,
+      "recall@top5%_mean": 0.11094276918273645,
+      "recall@top10%_mean": 0.20304029407462426
+    }
+  ],
+  "n_rows_trained": 21660,
+  "pit_rate": 0.23882733148661126
+}

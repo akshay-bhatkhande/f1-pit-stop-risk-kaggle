@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.env
+.python-version
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Secrets
+.kaggle/
+**/.kaggle/
+.env
+kaggle.json
+
+# Data (competition CSVs stay local)
+data/raw/*.csv
+data/raw/*.zip
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/raw/README.md
+
+# Model dumps at models/ root; committed demo bundle lives under models/demo/
+models/*.joblib
+models/*.pkl
+!models/.gitkeep
+!models/demo/
+!models/demo/**
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Submissions / local outputs
+submissions/*.csv
+!submissions/.gitkeep
+/reports/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+.streamlit/secrets.toml
