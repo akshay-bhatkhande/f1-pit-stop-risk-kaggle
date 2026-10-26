@@ -12,4 +12,4 @@ Status after Build Agent 2 ship (demo + Kaggle-compatible pipeline).
 | Any target encoding fitted inside CV folds only | ✅ | No target encoding used; one-hot + scaling fit inside each fold via sklearn `Pipeline` |
 | Test CSV labels never invented from public notebooks for “training” | ✅ | Test used only for schema/smoke; training uses labeled train only |
 
-**Honesty note:** Offline clone-and-run ships with *synthetic* demo CSVs from `python -m src.data.generate_demo` when Kaggle credentials are absent. Prefer official Playground CSVs (`scripts/download_data.sh`) for portfolio claims about competition-scale size.
+**Honesty note:** Shipped metrics/models (2026-10-26) use **official** Playground S6E5 CSVs (`DATA_SOURCE.txt` → `kaggle_playground_s6e5`, ~439k train). Offline clone-and-run can still fall back to `python -m src.data.generate_demo` when CSVs are absent — that path must keep the synthetic banner and must not overwrite the README’s official metrics table without a retrain.

@@ -1,4 +1,3 @@
-synthetic_demo
-rows_train≈21660 — NOT official Kaggle Playground S6E5.
-Replace via: FORCE=1 bash scripts/download_data.sh (needs ~/.kaggle/kaggle.json)
-or manual unzip into data/raw/, then: python -m src.models.train
+kaggle_playground_s6e5
+source=local copy from Desktop/Job Repo/playground-series-s6e5
+rows_train≈439140 (wc -l train.csv=439141 incl. header)
